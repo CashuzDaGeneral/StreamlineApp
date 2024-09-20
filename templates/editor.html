@@ -27,6 +27,9 @@
         <button id="create-version">Create Version</button>
         <button id="view-versions">View Versions</button>
     </div>
+    <div class="custom-component">
+        <button id="create-custom-component">Create Custom Component</button>
+    </div>
     <div id="generated-code-display" style="display: none;">
         <h3>Generated Code</h3>
         <pre><code></code></pre>
@@ -46,58 +49,11 @@
 
 {% block extra_js %}
     <script src="{{ url_for('static', filename='js/preview.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initializePreview({{ project.id }});
             setupVersionControl();
-        });
-
-        function setupVersionControl() {
-            document.getElementById('create-version').addEventListener('click', createVersion);
-            document.getElementById('view-versions').addEventListener('click', viewVersions);
-        }
-
-        function createVersion() {
-            const versionNumber = prompt('Enter version number:');
-            if (versionNumber) {
-                fetch(`/api/projects/{{ project.id }}/versions`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ version_number: versionNumber }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                    } else {
-                        alert('Version created successfully');
-                    }
-                });
-            }
-        }
-
-        function viewVersions() {
-            fetch(`/api/projects/{{ project.id }}/versions`)
-                .then(response => response.json())
-                .then(versions => {
-                    const list = document.getElementById('versions-list');
-                    list.innerHTML = '';
-                    versions.forEach(version => {
-                        const li = document.createElement('li');
-                        li.textContent = `Version ${version.version_number} (${new Date(version.created_at).toLocaleString()})`;
-                        list.appendChild(li);
-                    });
-                    document.getElementById('versions-modal').style.display = 'block';
-                });
-        }
-
-        // Close modal when clicking on <span> (x)
-        document.querySelectorAll('.close').forEach(closeBtn => {
-            closeBtn.onclick = function() {
-                this.closest('.modal').style.display = 'none';
-            }
         });
     </script>
 {% endblock %}

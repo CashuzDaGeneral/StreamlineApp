@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupOptimization();
     setupVersionControl();
     setupCollaboration();
+    setupCustomComponentCreation();
 });
 
 function initializeDragAndDrop() {
@@ -53,7 +54,13 @@ function setupComponentLibrary() {
         { type: 'input', label: 'Input' },
         { type: 'image', label: 'Image' },
         { type: 'text', label: 'Text' },
-        { type: 'container', label: 'Container' }
+        { type: 'container', label: 'Container' },
+        { type: 'card', label: 'Card' },
+        { type: 'list', label: 'List' },
+        { type: 'table', label: 'Table' },
+        { type: 'chart', label: 'Chart' },
+        { type: 'form', label: 'Form' },
+        { type: 'custom', label: 'Custom Component' }
     ];
 
     components.forEach(component => {
@@ -308,4 +315,35 @@ function updateCollaboratorsList() {
 
 function getProjectId() {
     return document.querySelector('.editor-container').dataset.projectId;
+}
+
+function setupCustomComponentCreation() {
+    const createCustomComponentButton = document.getElementById('create-custom-component');
+    if (!createCustomComponentButton) return;
+
+    createCustomComponentButton.addEventListener('click', () => {
+        const componentName = prompt('Enter custom component name:');
+        const componentProperties = prompt('Enter component properties (comma-separated):');
+        
+        if (componentName && componentProperties) {
+            const properties = componentProperties.split(',').map(prop => prop.trim());
+            
+            fetch('/api/custom_component', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    name: componentName, 
+                    properties: properties 
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(`Custom component "${data.name}" created successfully!`);
+                setupComponentLibrary();
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    });
 }

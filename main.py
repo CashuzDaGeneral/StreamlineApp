@@ -72,6 +72,35 @@ def api_projects():
         for p in projects + collaborating_projects
     ])
 
+@app.route('/api/custom_component', methods=['POST'])
+@login_required
+def create_custom_component():
+    data = request.json
+    name = data.get('name')
+    properties = data.get('properties', [])
+    
+    if not name:
+        return jsonify({'error': 'Component name is required'}), 400
+    
+    # Create a new custom component
+    custom_component = Component(
+        type='custom',
+        properties={
+            'name': name,
+            'custom_properties': properties
+        },
+        project_id=None  # This will be set when the component is added to a project
+    )
+    
+    db.session.add(custom_component)
+    db.session.commit()
+    
+    return jsonify({
+        'id': custom_component.id,
+        'name': name,
+        'properties': properties
+    }), 201
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
