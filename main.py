@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, request, redirect, url_for
 from flask_login import LoginManager, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from config import Config
 from models import db, User, Project, Component
 from auth import auth_bp
@@ -11,6 +12,7 @@ import os
 
 app = Flask(__name__)
 app.config.from_object(Config)
+CORS(app)
 
 db.init_app(app)
 
@@ -44,6 +46,24 @@ def editor(project_id):
         return jsonify({'error': 'Unauthorized'}), 403
     components = Component.query.filter_by(project_id=project_id).all()
     return render_template('editor.html', project=project, components=components)
+
+@app.route('/api/health')
+def health_check():
+    return jsonify({"status": "healthy"}), 200
+
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    data = request.json
+    user = User.query.filter_by(username=data['username']).first()
+    if user and user.check_password(data['password']):
+        return jsonify({"success": True, "user_id": user.id}), 200
+    return jsonify({"success": False, "message": "Invalid credentials"}), 401
+
+@app.route('/api/projects', methods=['GET'])
+@login_required
+def api_projects():
+    projects = Project.query.filter_by(user_id=current_user.id).all()
+    return jsonify([{"id": p.id, "name": p.name, "description": p.description} for p in projects])
 
 if __name__ == '__main__':
     with app.app_context():
