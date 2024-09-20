@@ -1,0 +1,41 @@
+/* Component Styles */
+.component {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 3px;
+    cursor: move;
+}
+
+.component-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.component-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.component-image {
+    max-width: 100%;
+    height: auto;
+}
+
+.component-text {
+    font-size: 16px;
+    color: #333;
+}
+
+.component-container {
+    border: 2px dashed #007bff;
+    min-height: 100px;
+    padding: 10px;
+}
