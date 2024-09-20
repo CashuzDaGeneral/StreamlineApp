@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Editor - {{ project.name }}{% endblock %}
+
+{% block content %}
+    <h1>{{ project.name }} - Editor</h1>
+    <div class="editor-container">
+        <div class="component-library">
+            <h2>Component Library</h2>
+            <!-- Component library items will be added here dynamically -->
+        </div>
+        <div class="canvas">
+            <h2>Canvas</h2>
+            <!-- Drag and drop components here -->
+        </div>
+        <div class="preview">
+            <h2>Preview</h2>
+            <!-- Real-time preview will be shown here -->
+        </div>
+    </div>
+    <div class="ai-tools">
+        <button id="ai-suggest">AI Suggestion</button>
+        <button id="generate-code">Generate Code</button>
+        <button id="optimize-components">Optimize Components</button>
+    </div>
+    <div id="generated-code-display" style="display: none;">
+        <h3>Generated Code</h3>
+        <pre><code></code></pre>
+    </div>
+    <div id="optimization-suggestions-display" style="display: none;">
+        <h3>Optimization Suggestions</h3>
+        <pre></pre>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{{ url_for('static', filename='js/preview.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initializePreview({{ project.id }});
+        });
+    </script>
+{% endblock %}
