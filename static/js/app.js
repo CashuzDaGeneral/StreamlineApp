@@ -7,10 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     setupProjectManagement();
     setupCodeGeneration();
     setupOptimization();
+    setupVersionControl();
+    setupCollaboration();
 });
 
 function initializeDragAndDrop() {
-    // Initialize interact.js for drag-and-drop functionality
     interact('.component')
         .draggable({
             inertia: true,
@@ -177,8 +178,6 @@ function setupOptimization() {
 }
 
 function getComponentsFromCanvas() {
-    // Implement this function to get the current components from the canvas
-    // For now, we'll return a sample array of components
     return [
         { type: 'button', properties: { label: 'Click me' } },
         { type: 'input', properties: { placeholder: 'Enter text' } },
@@ -204,4 +203,109 @@ function displayOptimizationSuggestions(suggestions) {
     } else {
         alert('Optimization Suggestions:\n\n' + suggestions);
     }
+}
+
+function setupVersionControl() {
+    const createVersionButton = document.getElementById('create-version');
+    const viewVersionsButton = document.getElementById('view-versions');
+
+    if (createVersionButton) {
+        createVersionButton.addEventListener('click', createVersion);
+    }
+
+    if (viewVersionsButton) {
+        viewVersionsButton.addEventListener('click', viewVersions);
+    }
+}
+
+function createVersion() {
+    const versionNumber = prompt('Enter version number:');
+    if (versionNumber) {
+        const projectId = getProjectId();
+        fetch(`/api/projects/${projectId}/versions`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ version_number: versionNumber }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                alert('Version created successfully');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+}
+
+function viewVersions() {
+    const projectId = getProjectId();
+    fetch(`/api/projects/${projectId}/versions`)
+        .then(response => response.json())
+        .then(versions => {
+            const versionsModal = document.getElementById('versions-modal');
+            const versionsList = document.getElementById('versions-list');
+            versionsList.innerHTML = '';
+            versions.forEach(version => {
+                const li = document.createElement('li');
+                li.textContent = `Version ${version.version_number} (${new Date(version.created_at).toLocaleString()})`;
+                versionsList.appendChild(li);
+            });
+            versionsModal.style.display = 'block';
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function setupCollaboration() {
+    const addCollaboratorButton = document.getElementById('add-collaborator');
+    if (addCollaboratorButton) {
+        addCollaboratorButton.addEventListener('click', addCollaborator);
+    }
+}
+
+function addCollaborator() {
+    const collaboratorUsername = prompt('Enter collaborator username:');
+    if (collaboratorUsername) {
+        const projectId = getProjectId();
+        fetch(`/api/projects/${projectId}/collaborators`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username: collaboratorUsername }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                alert('Collaborator added successfully');
+                updateCollaboratorsList();
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+}
+
+function updateCollaboratorsList() {
+    const projectId = getProjectId();
+    fetch(`/api/projects/${projectId}/collaborators`)
+        .then(response => response.json())
+        .then(collaborators => {
+            const collaboratorsList = document.getElementById('collaborators-list');
+            collaboratorsList.innerHTML = '';
+            collaborators.forEach(collaborator => {
+                const li = document.createElement('li');
+                li.textContent = collaborator.username;
+                collaboratorsList.appendChild(li);
+            });
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function getProjectId() {
+    return document.querySelector('.editor-container').dataset.projectId;
 }

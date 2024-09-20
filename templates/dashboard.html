@@ -11,14 +11,75 @@
                 <h3>{{ project.name }}</h3>
                 <p>{{ project.description }}</p>
                 <a href="{{ url_for('editor', project_id=project.id) }}" class="btn">Edit</a>
+                <button class="btn btn-secondary" onclick="showCollaborators({{ project.id }})">Collaborators</button>
+            </div>
+        {% endfor %}
+    </div>
+    <h2>Collaborating Projects</h2>
+    <div class="project-list">
+        {% for project in collaborating_projects %}
+            <div class="project-card">
+                <h3>{{ project.name }}</h3>
+                <p>{{ project.description }}</p>
+                <a href="{{ url_for('editor', project_id=project.id) }}" class="btn">Edit</a>
             </div>
         {% endfor %}
     </div>
     <button id="create-project">Create New Project</button>
+
+    <div id="collaborators-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Collaborators</h2>
+            <ul id="collaborators-list"></ul>
+            <input type="text" id="new-collaborator" placeholder="Enter username">
+            <button onclick="addCollaborator()">Add Collaborator</button>
+        </div>
+    </div>
 {% endblock %}
 
 {% block extra_js %}
     <script>
         document.addEventListener('DOMContentLoaded', setupProjectManagement);
+
+        function showCollaborators(projectId) {
+            fetch(`/api/projects/${projectId}/collaborators`)
+                .then(response => response.json())
+                .then(collaborators => {
+                    const list = document.getElementById('collaborators-list');
+                    list.innerHTML = '';
+                    collaborators.forEach(collaborator => {
+                        const li = document.createElement('li');
+                        li.textContent = collaborator.username;
+                        list.appendChild(li);
+                    });
+                    document.getElementById('collaborators-modal').style.display = 'block';
+                });
+        }
+
+        function addCollaborator() {
+            const projectId = // Get the current project ID
+            const username = document.getElementById('new-collaborator').value;
+            fetch(`/api/projects/${projectId}/collaborators`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: username }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    showCollaborators(projectId);
+                }
+            });
+        }
+
+        // Close modal when clicking on <span> (x)
+        document.querySelector('.close').onclick = function() {
+            document.getElementById('collaborators-modal').style.display = 'none';
+        }
     </script>
 {% endblock %}
