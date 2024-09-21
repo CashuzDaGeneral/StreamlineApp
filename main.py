@@ -30,7 +30,10 @@ app.register_blueprint(collaboration_bp)
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.route('/', defaults={'path': ''})
+@app.route('/')
+def index():
+    return send_from_directory(app.static_folder + '/react', 'index.html')
+
 @app.route('/<path:path>')
 def serve(path):
     if path != "" and os.path.exists(app.static_folder + '/react/' + path):
