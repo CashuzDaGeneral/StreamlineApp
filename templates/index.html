@@ -2,13 +2,104 @@
 
 {% block title %}Welcome to Streamline App{% endblock %}
 
+{% block extra_css %}
+<style>
+    body {
+        background-color: #000;
+        color: #fff;
+        font-family: 'Arial', sans-serif;
+    }
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+    }
+    h1 {
+        font-size: 3rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        color: #00ffff;
+        text-shadow: 0 0 10px #00ffff;
+    }
+    .smartphone {
+        width: 300px;
+        height: 600px;
+        background-color: #111;
+        border-radius: 30px;
+        padding: 20px;
+        box-shadow: 0 0 20px #00ffff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .app-name {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: #00ff00;
+        text-shadow: 0 0 10px #00ff00;
+    }
+    .cube-icons {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+        margin-top: 2rem;
+    }
+    .cube {
+        width: 60px;
+        height: 60px;
+        background-color: rgba(0, 255, 255, 0.2);
+        border: 2px solid #00ffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #00ffff;
+        text-shadow: 0 0 5px #00ffff;
+        transform: rotate(45deg);
+        transition: all 0.3s ease;
+    }
+    .cube:hover {
+        transform: rotate(45deg) scale(1.1);
+        box-shadow: 0 0 15px #00ffff;
+    }
+    .btn {
+        background-color: #00ff00;
+        color: #000;
+        border: none;
+        padding: 10px 20px;
+        margin: 10px;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .btn:hover {
+        background-color: #00ffff;
+        box-shadow: 0 0 10px #00ffff;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
+<div class="container">
     <h1>Welcome to Streamline App</h1>
-    <p>Build low-code applications with AI assistance</p>
-    {% if current_user.is_authenticated %}
-        <a href="{{ url_for('dashboard') }}" class="btn">Go to Dashboard</a>
-    {% else %}
-        <a href="{{ url_for('auth.login') }}" class="btn">Login</a>
-        <a href="{{ url_for('auth.register') }}" class="btn">Register</a>
-    {% endif %}
+    <div class="smartphone">
+        <div class="app-name">Streamline App</div>
+        <p>Build low-code applications with AI assistance</p>
+        <div class="cube-icons">
+            <div class="cube">AI</div>
+            <div class="cube">LC</div>
+            <div class="cube">AP</div>
+        </div>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('dashboard') }}" class="btn">Go to Dashboard</a>
+        {% else %}
+            <a href="{{ url_for('auth.login') }}" class="btn">Login</a>
+            <a href="{{ url_for('auth.register') }}" class="btn">Register</a>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

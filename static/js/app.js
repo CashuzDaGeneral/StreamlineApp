@@ -63,6 +63,8 @@ function setupComponentLibrary() {
         { type: 'custom', label: 'Custom Component' }
     ];
 
+    componentLibrary.innerHTML = ''; // Clear existing components
+
     components.forEach(component => {
         const element = document.createElement('div');
         element.className = 'component-item';
@@ -185,11 +187,16 @@ function setupOptimization() {
 }
 
 function getComponentsFromCanvas() {
-    return [
-        { type: 'button', properties: { label: 'Click me' } },
-        { type: 'input', properties: { placeholder: 'Enter text' } },
-        { type: 'text', properties: { content: 'Hello, World!' } }
-    ];
+    const canvas = document.querySelector('.canvas');
+    const components = Array.from(canvas.children).map(component => {
+        return {
+            type: component.dataset.type,
+            properties: JSON.parse(component.dataset.properties || '{}'),
+            position_x: parseFloat(component.style.left) || 0,
+            position_y: parseFloat(component.style.top) || 0
+        };
+    });
+    return components;
 }
 
 function displayGeneratedCode(generatedCode) {
@@ -341,7 +348,7 @@ function setupCustomComponentCreation() {
             .then(response => response.json())
             .then(data => {
                 alert(`Custom component "${data.name}" created successfully!`);
-                setupComponentLibrary();
+                setupComponentLibrary(); // Refresh the component library
             })
             .catch(error => console.error('Error:', error));
         }
