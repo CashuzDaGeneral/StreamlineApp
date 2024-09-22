@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, DollarSign, BarChart2, Smartphone, Zap, Users, FileText, Package, Sun, Moon } from 'lucide-react'
 
-const IsometricIcon: React.FC<{ icon: React.ReactNode; title: string; description: string }> = ({ icon, title, description }) => {
+const IsometricIcon = ({ icon, title, description }) => {
   const [isHovered, setIsHovered] = useState(false)
 
   return (
@@ -39,7 +39,7 @@ const IsometricIcon: React.FC<{ icon: React.ReactNode; title: string; descriptio
   )
 }
 
-const HomePage: React.FC = () => {
+const HomePage = () => {
   const [glowOpacity, setGlowOpacity] = useState(0.5)
   const [isDarkMode, setIsDarkMode] = useState(true)
   const [selectedLanguage, setSelectedLanguage] = useState('en')
@@ -56,7 +56,7 @@ const HomePage: React.FC = () => {
     // You would also update your Tailwind classes here
   }
 
-  const changeLanguage = (lang: string) => {
+  const changeLanguage = (lang) => {
     setSelectedLanguage(lang)
     // You would implement your localization logic here
   }
