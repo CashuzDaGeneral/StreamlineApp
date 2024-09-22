@@ -19,11 +19,13 @@ def api(path):
 @app.route('/<path:path>')
 def serve(path):
     app.logger.info(f"Requested path: {path}")
-    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+    if path.startswith("api/"):
+        return api(path[4:])
+    elif path != "" and os.path.exists(os.path.join(app.static_folder, path)):
         app.logger.info(f"Serving file: {path}")
         return send_from_directory(app.static_folder, path)
     else:
-        app.logger.info(f"File not found, serving index.html for path: {path}")
+        app.logger.info(f"Serving index.html for path: {path}")
         try:
             return send_from_directory(app.static_folder, 'index.html')
         except FileNotFoundError:
