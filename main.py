@@ -19,10 +19,7 @@ def api(path):
 @app.route('/<path:path>')
 def serve(path):
     app.logger.info(f"Requested path: {path}")
-    if path == "":
-        app.logger.info("Serving index.html for root path")
-        return send_from_directory(app.static_folder, 'index.html')
-    elif os.path.exists(os.path.join(app.static_folder, path)):
+    if path != "" and os.path.exists(app.static_folder + '/' + path):
         app.logger.info(f"Serving file: {path}")
         return send_from_directory(app.static_folder, path)
     else:
