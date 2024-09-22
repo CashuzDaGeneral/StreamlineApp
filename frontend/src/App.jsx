@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import StreamlineAppHomepage from './StreamlineAppHomepage';
+import HomePage from './StreamlineAppHomepage';
 import Login from './Login';
 import ComponentLibrary from './ComponentLibrary';
 
@@ -15,7 +15,7 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<StreamlineAppHomepage />} />
+          <Route path="/" element={<HomePage />} />
           <Route
             path="/login"
             element={user ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />}
