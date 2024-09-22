@@ -19,18 +19,17 @@ def api(path):
 @app.route('/<path:path>')
 def serve(path):
     app.logger.info(f"Requested path: {path}")
-    if path.startswith("api/"):
-        return api(path[4:])
-    elif path != "" and os.path.exists(os.path.join(app.static_folder, path)):
-        app.logger.info(f"Serving file: {path}")
+    if path == "":
+        app.logger.info("Serving index.html")
+        return send_from_directory(app.static_folder, 'index.html')
+    elif path.startswith("assets/"):
+        app.logger.info(f"Serving asset: {path}")
         return send_from_directory(app.static_folder, path)
+    elif path.startswith("api/"):
+        return api(path[4:])
     else:
         app.logger.info(f"Serving index.html for path: {path}")
-        try:
-            return send_from_directory(app.static_folder, 'index.html')
-        except FileNotFoundError:
-            app.logger.error(f"index.html not found in {app.static_folder}")
-            abort(404)
+        return send_from_directory(app.static_folder, 'index.html')
 
 @app.errorhandler(404)
 def not_found(e):
