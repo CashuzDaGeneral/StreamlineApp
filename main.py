@@ -41,5 +41,5 @@ if __name__ == '__main__':
     app.logger.info(f"Starting Flask server. Static folder: {app.static_folder}")
     app.logger.info(f"Current working directory: {os.getcwd()}")
     app.logger.info(f"Files in static folder: {os.listdir(app.static_folder)}")
-    print("Flask server is starting on port 3000...")
-    app.run(host='0.0.0.0', port=3000, debug=True)
+    print("Flask server is starting on port 8080...")
+    app.run(host='0.0.0.0', port=8080, debug=True)
