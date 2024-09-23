@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   root: path.resolve(__dirname, 'src'),
   build: {
-    outDir: '../../static/react',
+    outDir: '../static/react',
     emptyOutDir: true,
     rollupOptions: {
       input: {
