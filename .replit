@@ -33,7 +33,7 @@ agentRequireRestartOnSave = false
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python main.py"
-waitForPort = 8080
+waitForPort = 5000
 
 [[workflows.workflow]]
 name = "Build React and Start Flask"
@@ -60,10 +60,6 @@ args = "cd frontend && npm install && npm run build"
 
 [deployment]
 run = ["sh", "-c", "python main.py"]
-
-[[ports]]
-localPort = 3000
-externalPort = 3000
 
 [[ports]]
 localPort = 5000

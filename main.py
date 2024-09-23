@@ -8,37 +8,30 @@ CORS(app)
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 @app.route('/api/<path:path>')
 def api(path):
     # Handle API routes here
-    app.logger.info(f"API request received: {path}")
+    logger.info(f"API request received: {path}")
     return f"API endpoint: {path}"
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
-    app.logger.info(f"Requested path: {path}")
-    if path == "":
-        app.logger.info("Serving index.html")
-        return send_from_directory(app.static_folder, 'index.html')
-    elif path.startswith("assets/"):
-        app.logger.info(f"Serving asset: {path}")
+    logger.info(f"Requested path: {path}")
+    if path.startswith("assets/"):
         return send_from_directory(app.static_folder, path)
-    elif path.startswith("api/"):
-        return api(path[4:])
-    else:
-        app.logger.info(f"Serving index.html for path: {path}")
-        return send_from_directory(app.static_folder, 'index.html')
+    return send_from_directory(app.static_folder, 'index.html')
 
 @app.errorhandler(404)
 def not_found(e):
-    app.logger.error(f"404 error: {e}")
-    return "404 Not Found", 404
+    logger.error(f"404 error: {e}")
+    return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
-    app.logger.info(f"Starting Flask server. Static folder: {app.static_folder}")
-    app.logger.info(f"Current working directory: {os.getcwd()}")
-    app.logger.info(f"Files in static folder: {os.listdir(app.static_folder)}")
-    print("Flask server is starting on port 8080...")
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    logger.info(f"Starting Flask server. Static folder: {app.static_folder}")
+    logger.info(f"Current working directory: {os.getcwd()}")
+    logger.info(f"Files in static folder: {os.listdir(app.static_folder)}")
+    print("Flask server is starting on port 5000...")
+    app.run(host='0.0.0.0', port=5000, debug=True)
