@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, abort
+from flask import Flask, send_from_directory, abort, request
 from flask_cors import CORS
 import os
 import logging
@@ -20,14 +20,22 @@ def api(path):
 @app.route('/<path:path>')
 def serve(path):
     logger.info(f"Requested path: {path}")
-    if path.startswith("assets/"):
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        logger.info(f"Serving file: {path}")
         return send_from_directory(app.static_folder, path)
-    return send_from_directory(app.static_folder, 'index.html')
+    else:
+        logger.info(f"Serving index.html for path: {path}")
+        return send_from_directory(app.static_folder, 'index.html')
 
 @app.errorhandler(404)
 def not_found(e):
     logger.error(f"404 error: {e}")
     return send_from_directory(app.static_folder, 'index.html')
+
+@app.before_request
+def log_request_info():
+    logger.debug('Headers: %s', request.headers)
+    logger.debug('Body: %s', request.get_data())
 
 if __name__ == '__main__':
     logger.info(f"Starting Flask server. Static folder: {app.static_folder}")
