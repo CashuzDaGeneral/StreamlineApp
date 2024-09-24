@@ -17,10 +17,11 @@ def not_found(e):
     logger.error(f"404 Error: {e}, Path: {request.path}")
     return jsonify({"error": "Not Found"}), 404
 
-# URL route for accessing the front end home page
+@app.route('/')
 def index():
-    return redirect(url_for('serve', path=''))
-app.add_url_rule('/', 'index', index)
+    """Serve the index.html file for the root URL."""
+    logger.info("Serving index.html for root URL")
+    return send_from_directory(app.static_folder, 'index.html')
 
 @app.route('/<path:path>')
 def serve(path):
@@ -30,14 +31,18 @@ def serve(path):
     """
     logger.debug(f'Requested path: {path}')
     
-    # Serve the index.html for all paths except for known static files
-    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
-        logger.debug(f"Serving static file: {path}")
+    full_path = os.path.join(app.static_folder, path)
+    if os.path.exists(full_path) and os.path.isfile(full_path):
+        logger.info(f"Serving static file: {path}")
         return send_from_directory(app.static_folder, path)
     else:
-        # Fallback to React index.html for all unknown routes (React Router SPA)
-        logger.debug(f'Serving index.html for React routing: {path}')
-        return send_from_directory(app.static_folder, 'index.html')
+        logger.info(f'File not found, serving index.html for React routing: {path}')
+        index_path = os.path.join(app.static_folder, 'index.html')
+        if os.path.exists(index_path):
+            return send_from_directory(app.static_folder, 'index.html')
+        else:
+            logger.error(f'index.html not found in {app.static_folder}')
+            return abort(404)
 
 @app.route('/assets/<path:filename>')
 def serve_assets(filename):
@@ -47,15 +52,16 @@ def serve_assets(filename):
     asset_folder = os.path.join(app.static_folder, 'assets')
     file_path = os.path.join(asset_folder, filename)
 
-    # Check if asset exists
     if os.path.exists(file_path):
-        logger.debug(f'Serving asset: {filename}')
+        logger.info(f'Serving asset: {filename}')
         return send_from_directory(asset_folder, filename)
     else:
         logger.error(f'Asset not found: {filename}')
         return abort(404, description="Resource not found")
 
 if __name__ == '__main__':
+    logger.info("Starting Flask application")
+    
     # Log available files on startup for better debugging
     if os.path.exists(app.static_folder):
         logger.info(f'Static folder contents: {os.listdir(app.static_folder)}')
@@ -63,6 +69,8 @@ if __name__ == '__main__':
     asset_path = os.path.join(app.static_folder, 'assets')
     if os.path.exists(asset_path):
         logger.info(f'Assets folder contents: {os.listdir(asset_path)}')
+    else:
+        logger.warning(f'Assets folder not found: {asset_path}')
     
     # Run the Flask app
     app.run(host='0.0.0.0', port=5000, debug=True)
