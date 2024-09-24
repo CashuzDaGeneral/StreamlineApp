@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import HomePage from './StreamlineAppHomepage';
 import Login from './Login';
@@ -10,6 +10,21 @@ function App() {
   const handleLogin = (userId) => {
     setUser({ id: userId });
   };
+
+  useEffect(() => {
+    // Check for user in local storage
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save user to local storage
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    }
+  }, [user]);
 
   return (
     <Router>

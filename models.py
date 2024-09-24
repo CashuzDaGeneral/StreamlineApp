@@ -3,7 +3,12 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
+# Initialize the database
+
+
 db = SQLAlchemy()
+
+# Association table for many-to-many relationship between User and Project
 
 collaborators = db.Table('collaborators',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
@@ -24,6 +29,9 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def __repr__(self):
+        return f'<User {self.username}>'
+
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
@@ -33,6 +41,9 @@ class Project(db.Model):
     versions = db.relationship('ProjectVersion', backref='project', lazy='dynamic')
     collaborators = db.relationship('User', secondary=collaborators, back_populates='collaborating_projects')
 
+    def __repr__(self):
+        return f'<Project {self.name}>'
+
 class Component(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(32), nullable=False)
@@ -41,12 +52,18 @@ class Component(db.Model):
     position_y = db.Column(db.Float)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
 
+    def __repr__(self):
+        return f'<Component {self.type}>'
+
 class ProjectVersion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     version_number = db.Column(db.String(32), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
     components = db.relationship('VersionComponent', backref='project_version', lazy='dynamic')
+
+    def __repr__(self):
+        return f'<ProjectVersion {self.version_number}>'
 
 class VersionComponent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -55,3 +72,6 @@ class VersionComponent(db.Model):
     position_x = db.Column(db.Float)
     position_y = db.Column(db.Float)
     project_version_id = db.Column(db.Integer, db.ForeignKey('project_version.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<VersionComponent {self.type}>'

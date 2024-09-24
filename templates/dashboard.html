@@ -33,7 +33,7 @@
             <h2>Collaborators</h2>
             <ul id="collaborators-list"></ul>
             <input type="text" id="new-collaborator" placeholder="Enter username">
-            <button onclick="addCollaborator()">Add Collaborator</button>
+            <button id="add-collaborator-btn">Add Collaborator</button>
         </div>
     </div>
 {% endblock %}
@@ -44,7 +44,12 @@
 
         function showCollaborators(projectId) {
             fetch(`/api/projects/${projectId}/collaborators`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(collaborators => {
                     const list = document.getElementById('collaborators-list');
                     list.innerHTML = '';
@@ -54,11 +59,15 @@
                         list.appendChild(li);
                     });
                     document.getElementById('collaborators-modal').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('There was a problem with your fetch operation:', error);
+                    alert('Failed to load collaborators');
                 });
         }
 
         function addCollaborator() {
-            const projectId = // Get the current project ID
+            const projectId = document.querySelector('.project-card').dataset.projectId;
             const username = document.getElementById('new-collaborator').value;
             fetch(`/api/projects/${projectId}/collaborators`, {
                 method: 'POST',
@@ -67,19 +76,29 @@
                 },
                 body: JSON.stringify({ username: username }),
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.error) {
                     alert(data.error);
                 } else {
                     showCollaborators(projectId);
                 }
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+                alert('Failed to add collaborator');
             });
         }
 
-        // Close modal when clicking on <span> (x)
         document.querySelector('.close').onclick = function() {
             document.getElementById('collaborators-modal').style.display = 'none';
         }
+
+        document.getElementById('add-collaborator-btn').onclick = addCollaborator;
     </script>
 {% endblock %}

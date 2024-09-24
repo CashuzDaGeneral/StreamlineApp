@@ -8,6 +8,11 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
+    if (!username || !password) {
+      Alert.alert('Error', 'Please fill in both fields');
+      return;
+    }
+
     try {
       const response = await fetch(`${API_URL}/api/login`, {
         method: 'POST',
@@ -19,7 +24,7 @@ export default function LoginScreen() {
 
       const data = await response.json();
 
-      if (data.success) {
+      if (response.ok && data.success) {
         Alert.alert('Success', 'Login successful!');
         // TODO: Navigate to the main app screen
       } else {

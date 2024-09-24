@@ -12,7 +12,7 @@ def create_version(project_id):
     if project.user_id != current_user.id and current_user not in project.collaborators:
         return jsonify({'error': 'Unauthorized'}), 403
 
-    data = request.json
+    data = request.get_json()
     version_number = data.get('version_number')
     
     if not version_number:
@@ -56,7 +56,7 @@ def add_collaborator(project_id):
     if project.user_id != current_user.id:
         return jsonify({'error': 'Unauthorized'}), 403
 
-    data = request.json
+    data = request.get_json()
     collaborator_username = data.get('username')
     
     if not collaborator_username:

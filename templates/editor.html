@@ -19,16 +19,16 @@
         </div>
     </div>
     <div class="ai-tools">
-        <button id="ai-suggest">AI Suggestion</button>
-        <button id="generate-code">Generate Code</button>
-        <button id="optimize-components">Optimize Components</button>
+        <button id="ai-suggest" onclick="getAiSuggestion()">AI Suggestion</button>
+        <button id="generate-code" onclick="generateCode()">Generate Code</button>
+        <button id="optimize-components" onclick="optimizeComponents()">Optimize Components</button>
     </div>
     <div class="version-control">
-        <button id="create-version">Create Version</button>
-        <button id="view-versions">View Versions</button>
+        <button id="create-version" onclick="createVersion()">Create Version</button>
+        <button id="view-versions" onclick="viewVersions()">View Versions</button>
     </div>
     <div class="custom-component">
-        <button id="create-custom-component">Create Custom Component</button>
+        <button id="create-custom-component" onclick="createCustomComponent()">Create Custom Component</button>
     </div>
     <div id="generated-code-display" style="display: none;">
         <h3>Generated Code</h3>
@@ -40,7 +40,7 @@
     </div>
     <div id="versions-modal" class="modal" style="display:none;">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <span class="close" onclick="closeModal('versions-modal')">&times;</span>
             <h2>Project Versions</h2>
             <ul id="versions-list"></ul>
         </div>
@@ -55,5 +55,33 @@
             initializePreview({{ project.id }});
             setupVersionControl();
         });
+        
+        function getAiSuggestion() {
+            // Implement AI Suggestion functionality
+        }
+
+        function generateCode() {
+            // Implement Generate Code functionality
+        }
+
+        function optimizeComponents() {
+            // Implement Optimize Components functionality
+        }
+
+        function createVersion() {
+            // Implement Create Version functionality
+        }
+
+        function viewVersions() {
+            // Implement View Versions functionality
+        }
+
+        function createCustomComponent() {
+            // Implement Create Custom Component functionality
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
     </script>
 {% endblock %}

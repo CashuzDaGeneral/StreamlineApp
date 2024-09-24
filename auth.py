@@ -12,11 +12,14 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+        if not username or not password:
+            flash('Username and password are required')
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             login_user(user)
             return redirect(url_for('dashboard'))
-        flash('Invalid username or password')
+        else:
+            flash('Invalid username or password')
     return render_template('login.html')
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
@@ -27,7 +30,9 @@ def register():
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
-        if User.query.filter_by(username=username).first():
+        if not username or not email or not password:
+            flash('All fields are required')
+        elif User.query.filter_by(username=username).first():
             flash('Username already exists')
         elif User.query.filter_by(email=email).first():
             flash('Email already exists')
