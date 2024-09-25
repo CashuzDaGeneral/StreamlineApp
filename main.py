@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, abort, request, jsonify, redirect, url_for
+from flask import Flask, send_from_directory, abort, request, jsonify
 from flask_cors import CORS
 import os
 import logging
@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # Initialize Flask app
-app = Flask(__name__, static_folder='static/react', static_url_path='/static')
+app = Flask(__name__, static_folder='static/react', static_url_path='')
 CORS(app)
 
 @app.errorhandler(404)
@@ -17,12 +17,7 @@ def not_found(e):
     logger.error(f"404 Error: {e}, Path: {request.path}")
     return jsonify({"error": "Not Found"}), 404
 
-@app.route('/')
-def index():
-    """Serve the index.html file for the root URL."""
-    logger.info("Serving index.html for root URL")
-    return send_from_directory(app.static_folder, 'index.html')
-
+@app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
     """
@@ -31,18 +26,12 @@ def serve(path):
     """
     logger.debug(f'Requested path: {path}')
     
-    full_path = os.path.join(app.static_folder, path)
-    if os.path.exists(full_path) and os.path.isfile(full_path):
-        logger.info(f"Serving static file: {path}")
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        logger.debug(f"Serving static file: {path}")
         return send_from_directory(app.static_folder, path)
     else:
-        logger.info(f'File not found, serving index.html for React routing: {path}')
-        index_path = os.path.join(app.static_folder, 'index.html')
-        if os.path.exists(index_path):
-            return send_from_directory(app.static_folder, 'index.html')
-        else:
-            logger.error(f'index.html not found in {app.static_folder}')
-            return abort(404)
+        logger.debug(f'Serving index.html for React routing: {path}')
+        return send_from_directory(app.static_folder, 'index.html')
 
 @app.route('/assets/<path:filename>')
 def serve_assets(filename):
@@ -53,16 +42,15 @@ def serve_assets(filename):
     file_path = os.path.join(asset_folder, filename)
 
     if os.path.exists(file_path):
-        logger.info(f'Serving asset: {filename}')
+        logger.debug(f'Serving asset: {filename}')
         return send_from_directory(asset_folder, filename)
     else:
         logger.error(f'Asset not found: {filename}')
         return abort(404, description="Resource not found")
 
 if __name__ == '__main__':
-    logger.info("Starting Flask application")
-    
     # Log available files on startup for better debugging
+    logger.info(f"Static folder path: {app.static_folder}")
     if os.path.exists(app.static_folder):
         logger.info(f'Static folder contents: {os.listdir(app.static_folder)}')
     else:
