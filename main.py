@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # Initialize Flask app
-app = Flask(__name__, static_folder='static/react', static_url_path='')
+app = Flask(__name__, static_folder='app/static', static_url_path='')
 CORS(app)
 
 @app.errorhandler(404)
@@ -26,7 +26,11 @@ def serve(path):
     """
     logger.debug(f'Requested path: {path}')
     
-    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+    full_path = os.path.join(app.static_folder, path)
+    logger.debug(f'Full path: {full_path}')
+    logger.debug(f'File exists: {os.path.exists(full_path)}')
+    
+    if path != "" and os.path.exists(full_path):
         logger.debug(f"Serving static file: {path}")
         return send_from_directory(app.static_folder, path)
     else:
@@ -40,6 +44,10 @@ def serve_assets(filename):
     """
     asset_folder = os.path.join(app.static_folder, 'assets')
     file_path = os.path.join(asset_folder, filename)
+
+    logger.debug(f'Requested asset: {filename}')
+    logger.debug(f'Asset path: {file_path}')
+    logger.debug(f'Asset exists: {os.path.exists(file_path)}')
 
     if os.path.exists(file_path):
         logger.debug(f'Serving asset: {filename}')

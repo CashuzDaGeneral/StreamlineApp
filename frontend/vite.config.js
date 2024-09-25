@@ -8,7 +8,7 @@ export default defineConfig({
   ],
   root: path.resolve(__dirname, 'src'),
   build: {
-    outDir: path.resolve(__dirname, '../static/react'),
+    outDir: path.resolve(__dirname, '../app/static'),
     emptyOutDir: true,
     rollupOptions: {
       input: {
