@@ -22,7 +22,7 @@ def not_found(e):
 def serve(path):
     """
     Serve the React app or static files depending on the request path.
-    If the file exists, serve it; otherwise, serve index.html to allow React Router to handle routing.
+    If the file exists, serve it; otherwise, serve bypass.html to test Flask server routing.
     """
     logger.debug(f'Requested path: {path}')
     
@@ -34,8 +34,8 @@ def serve(path):
         logger.debug(f"Serving static file: {path}")
         return send_from_directory(app.static_folder, path)
     else:
-        logger.debug(f'Serving index.html for React routing: {path}')
-        return send_from_directory(app.static_folder, 'index.html')
+        logger.debug(f'Serving bypass.html for testing: {path}')
+        return send_from_directory(app.static_folder, 'bypass.html')
 
 @app.route('/assets/<path:filename>')
 def serve_assets(filename):
