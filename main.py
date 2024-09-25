@@ -65,6 +65,8 @@ if __name__ == '__main__':
     # Log available files on startup for better debugging
     if os.path.exists(app.static_folder):
         logger.info(f'Static folder contents: {os.listdir(app.static_folder)}')
+    else:
+        logger.warning(f'Static folder not found: {app.static_folder}')
     
     asset_path = os.path.join(app.static_folder, 'assets')
     if os.path.exists(asset_path):
@@ -73,4 +75,4 @@ if __name__ == '__main__':
         logger.warning(f'Assets folder not found: {asset_path}')
     
     # Run the Flask app
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
